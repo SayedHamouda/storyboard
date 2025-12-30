@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة انطلاقة | Story Board الحقيقية</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .storyboard-page {
+            width: 100%;
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .storyboard-page.active {
+            display: flex;
+        }
+
+        .scene {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+            position: relative;
+        }
+
+        .scene-container {
+            width: 100%;
+            max-width: 1400px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .scene-character {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        .scene-character img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(102, 126, 234, 0.2));
+        }
+
+        .scene-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .scene-title {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .scene-subtitle {
+            font-size: 1.3em;
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        .scene-description {
+            font-size: 1.1em;
+            color: var(--dark);
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .dialogue {
+            background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
+            padding: 20px 25px;
+            border-radius: 12px;
+            border-right: 5px solid var(--primary);
+            margin: 15px 0;
+        }
+
+        .dialogue-speaker {
+            color: var(--secondary);
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .dialogue-text {
+            color: var(--dark);
+            line-height: 1.7;
+            font-size: 1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+            padding: 18px 20px;
+            border-radius: 10px;
+            border-left: 4px solid var(--success);
+            text-align: center;
+        }
+
+        .stat-label {
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            color: var(--success);
+            font-weight: 900;
+        }
+
+        .scene-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .conclusion-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+            padding: 20px 25px;
+            border-radius: 12px;
+            border-left: 5px solid #f59e0b;
+            margin-top: 20px;
+        }
+
+        .conclusion-label {
+            color: #d97706;
+            font-weight: 800;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .conclusion-text {
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .page-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1em;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .scene-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .scene-title {
+                font-size: 2em;
+            }
+            .scene-character {
+                min-height: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .scene {
+                padding: 20px 15px;
+            }
+            .scene-container {
+                gap: 25px;
+            }
+            .scene-title {
+                font-size: 1.6em;
+            }
+            .scene-description {
+                font-size: 1em;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-counter">
+    <span id="current">1</span>/<span id="total">12</span>
+</div>
+
+<!-- ============ SCENE 1 ============ -->
+<div class="storyboard-page active" id="scene-1">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/887f8845-9dd1-488d-9311-e3a3e975aedd.png" alt="محمد">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 1️⃣</div>
+                <div class="scene-title">اللقاء الأول: محمد والأدوات المكتبية</div>
+                <div class="scene-subtitle">الساعة 10 صباحاً في مكتب محمد</div>
+
+                <div class="scene-description">
+                    محمد يدير متجر أدوات مكتبية منذ 15 سنة. لكن المشكلة: مبيعاته انخفضت 25% السنة الماضية. الطلاب يفضلون الشراء أونلاين من Noon و Amazon بدلاً من المتجر.
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👤 محمد (قلق من المستقبل):</div>
+                    <div class="dialogue-text">
+                        "يا سيد... الوضع صعب فعلاً. المحل بدأ يفقد زبائنه. ما الحل؟"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">📉 انخفاض المبيعات</div>
+                        <div class="stat-value">-25%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">👥 الزبائن المتبقيين</div>
+                        <div class="stat-value">30 يومياً</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 2 ============ -->
+<div class="storyboard-page" id="scene-2">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/13b33f94-426b-48cb-b315-f0e4efa15db4.png" alt="سيد">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 2️⃣</div>
+                <div class="scene-title">العرض المثير: منصة متخصصة للطلاب!</div>
+                <div class="scene-subtitle">سيد يقدم الحل الجديد</div>
+
+                <div class="scene-description">
+                    سيد (مؤسس منصة انطلاقة) يشرح الفكرة: منصة إلكترونية متخصصة <strong>فقط للطلاب</strong> في عمان. أسعار منافسة جداً + توصيل سريع.
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد (متحمس):</div>
+                    <div class="dialogue-text">
+                        "محمد، شنو رأيك تكون أنت البائع الأساسي للأدوات المكتبية في منصتنا؟ 15,000 طالب في عمان يمكن يشترون منك من خلالنا"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">🎓 الطلاب المستهدفين</div>
+                        <div class="stat-value">15K</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">📱 نمو متوقع</div>
+                        <div class="stat-value">50-100%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 3 ============ -->
+<div class="storyboard-page" id="scene-3">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/887f8845-9dd1-488d-9311-e3a3e975aedd.png" alt="محمد">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 3️⃣</div>
+                <div class="scene-title">التفاصيل المالية: الصفقة الذكية</div>
+                <div class="scene-subtitle">شروط العقد الأول</div>
+
+                <div class="scene-description">
+                    سيد يشرح الشروط: أول شهرين <strong>بدون عمولة</strong> + توصيل مجاني. محمد يبيع بسعر الجملة + هامش صغير (8-12%).
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد:</div>
+                    <div class="dialogue-text">
+                        "أول شهرين: أنت تبيع عندنا بسعرك الأساسي + 10% هامش فقط. ما فيه عمولة. نحن ندفع التوصيل."
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👤 محمد:</div>
+                    <div class="dialogue-text">
+                        "طيب... وليش أنتو بتخسرون؟ هذا عرض غريب!"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد (ابتسامة ذكية):</div>
+                    <div class="dialogue-text">
+                        "لأن الحجم والتقييمات والسمعة أهم من الربح الآن. بعد شهرين، إذا كل شيء تمام، نرفع العمولة لـ 5-10%"
+                    </div>
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">💡 لماذا محمد يوافق:</div>
+                    <div class="conclusion-text">
+                        بدلاً من 30 زبون يومي، سيحصل على احتمالية 8-15 طلب يومي من المنصة. مبيعات جديدة = فرصة ثانية!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 4 ============ -->
+<div class="storyboard-page" id="scene-4">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6b4f3025-ce77-486c-96db-db70dba1ad26.png" alt="فاطمة">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 4️⃣</div>
+                <div class="scene-title">الشركة الثانية: فاطمة والمستلزمات</div>
+                <div class="scene-subtitle">الحقائب والأحذية والإلكترونيات</div>
+
+                <div class="scene-description">
+                    فاطمة تدير متجر متخصص في: حقائب مدرسية، أحذية دراسية، ملابس، وأجهزة إلكترونية (سماعات، ويب كاميرا). لديها منتجات جودة عالية لكن السوق مشبعة.
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👤 فاطمة (تستقبل سيد):</div>
+                    <div class="dialogue-text">
+                        "أهلاً يا سيد! سمعت محمد تكلم عن منصتك. قال إن العرض ممتاز. شنو الخبر؟"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد:</div>
+                    <div class="dialogue-text">
+                        "منتجاتك متنوعة أكثر من محمد، لذا عندك هامش أكبر. العرض معك يصير أفضل شوي"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">🛍️ المنتجات</div>
+                        <div class="stat-value">500+</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">⭐ جودة العلامة</div>
+                        <div class="stat-value">4.2/5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 5 ============ -->
+<div class="storyboard-page" id="scene-5">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6b4f3025-ce77-486c-96db-db70dba1ad26.png" alt="فاطمة">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 5️⃣</div>
+                <div class="scene-title">الفرق: عمولة من البداية لكن ربح حقيقي</div>
+                <div class="scene-subtitle">المعادلة تختلف مع فاطمة</div>
+
+                <div class="scene-description">
+                    مع فاطمة، النموذج مختلف قليلاً. بدلاً من صفر عمولة، تأخذ 5% عمولة منذ البداية. لكن مازال الربح حقيقي لها!
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد:</div>
+                    <div class="dialogue-text">
+                        "حقيبة مدرسية: سعر الجملة 50 ريال. الطلاب يشترون بـ 65 ريال (فقط 20% أرخص من السوق). عمولتنا 5% = 3.25 ريال. أنتِ تربحين 12 ريال و 50 فلس"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">💰 ربح فاطمة/حقيبة</div>
+                        <div class="stat-value">12.5 ر</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">📦 حجم شهري متوقع</div>
+                        <div class="stat-value">150-200</div>
+                    </div>
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">✅ النتيجة:</div>
+                    <div class="conclusion-text">
+                        فاطمة = 150-200 حقيبة شهري × 12.5 ريال = 1,875-2,500 ريال أرباح شهرية إضافية!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 6 ============ -->
+<div class="storyboard-page" id="scene-6">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/3f89bc03-a71e-4887-a645-a5a27e441bc4.png" alt="علي">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 6️⃣</div>
+                <div class="scene-title">شركة التوصيل: علي من Asyad</div>
+                <div class="scene-subtitle">الجزء اللوجستي من المعادلة</div>
+
+                <div class="scene-description">
+                    علي يدير فرع Asyad في عمان. تحتاج الشركة طلبات يومية منتظمة. نحن نقدم لها هذا الحجم!
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👤 علي (مهتم):</div>
+                    <div class="dialogue-text">
+                        "كم طلب يومي تضمنون؟ والسعر؟"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد:</div>
+                    <div class="dialogue-text">
+                        "البداية: 8-12 طلب يومي بـ 0.800 فلس للطلب. بعد 3 أشهر: 20-30 طلب بـ 0.700 فلس. بعد 6 أشهر: 50+ طلب بـ 0.600 فلس"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">📦 طلب يومي (بداية)</div>
+                        <div class="stat-value">10</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">💵 دخل يومي</div>
+                        <div class="stat-value">8 ريال</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 7 ============ -->
+<div class="storyboard-page" id="scene-7">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/3f89bc03-a71e-4887-a645-a5a27e441bc4.png" alt="علي">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 7️⃣</div>
+                <div class="scene-title">الأرقام تتحدث: علي يرى المنطق</div>
+                <div class="scene-subtitle">حساب سريع للأرباح</div>
+
+                <div class="scene-description">
+                    علي يحسب بسرعة:
+                    - 10 طلبات يومياً × 0.800 فلس = 8 ريال يومياً
+                    - 8 ريال يومياً × 25 يوم عمل = 200 ريال شهرياً
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👤 علي (يحسب في رأسه):</div>
+                    <div class="dialogue-text">
+                        "200 ريال شهرياً بداية... بعد 3 أشهر يصير 525 ريال... بعد 6 أشهر يصير 750 ريال؟ هذا ممتاز!"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">💼 سيد:</div>
+                    <div class="dialogue-text">
+                        "وهذا بس في عمان. بعدين نتوسع للسعودية والإمارات. حجم كبير جداً!"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">الشهر 1-2</div>
+                        <div class="stat-value">200 ريال</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">الشهر 3-6</div>
+                        <div class="stat-value">525 ريال</div>
+                    </div>
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">✅ علي يوافق!</div>
+                    <div class="conclusion-text">
+                        حجم مضمون + نمو متوقع = فرصة عمل جديدة لـ Asyad. التوقيع على العقد فوراً!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 8 ============ -->
+<div class="storyboard-page" id="scene-8">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6b4f3025-ce77-486c-96db-db70dba1ad26.png" alt="لينا">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 8️⃣</div>
+                <div class="scene-title">جانب العملاء: لينا الطالبة تبحث</div>
+                <div class="scene-subtitle">الطالبة التي تحتاج حقيبة + سماعات</div>
+
+                <div class="scene-description">
+                    لينا (طالبة في الصف التاسع) تحتاج حقيبة مدرسية وسماعات جديدة. تفتش في Noon و Amazon و متاجر محلية. الأسعار متقاربة جداً.
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👧 لينا (تبحث في الهاتف):</div>
+                    <div class="dialogue-text">
+                        "حقيبة في Amazon = 80 ريال. في Noon = 75 ريال. في المتجر = 85 ريال. كل واحد فيهم تقريباً نفس السعر"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👧 لينا (تجد المنصة):</div>
+                    <div class="dialogue-text">
+                        "لحظة... في تطبيق جديد؟ 'انطلاقة'؟ الحقيبة هنا 65 ريال؟ والسماعات 45 ريال؟ يا إلهي!"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Amazon السعر</div>
+                        <div class="stat-value">80 ر</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">🎁 انطلاقة</div>
+                        <div class="stat-value">65 ر</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 9 ============ -->
+<div class="storyboard-page" id="scene-9">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6b4f3025-ce77-486c-96db-db70dba1ad26.png" alt="لينا">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 9️⃣</div>
+                <div class="scene-title">الشراء والتوصيل السريع</div>
+                <div class="scene-subtitle">الدرامية: توصيل بعد 24 ساعة!</div>
+
+                <div class="scene-description">
+                    لينا تشتري الساعة 3 مساءً. الطلب يصل إلى فاطمة. فاطمة تعبئ الطلب والساعة 6 مساءً. Asyad يستقبل الطلب والساعة 7 مساءً يتم التوصيل في نفس الليل!
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">⏰ جدول الأحداث:</div>
+                    <div class="dialogue-text">
+                        3:00 PM: لينا تشتري 📱<br>
+                        3:30 PM: لينا تتسلم تأكيد 📧<br>
+                        6:00 PM: فاطمة تعبّي الطلب 📦<br>
+                        7:00 PM: Asyad يستقبل 🚚<br>
+                        9:30 PM: لينا تتسلم البيت! 🚪
+                    </div>
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">💨 السرعة = تفاجئ إيجابي!</div>
+                    <div class="conclusion-text">
+                        لينا توصلها الحقيبة قبل ما تقول: حتى Amazon بتاخد يومين! هذا سريع جداً!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 10 ============ -->
+<div class="storyboard-page" id="scene-10">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/6b4f3025-ce77-486c-96db-db70dba1ad26.png" alt="لينا">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 1️⃣0️⃣</div>
+                <div class="scene-title">التقييم 5 نجوم والفيروس الإيجابي</div>
+                <div class="scene-subtitle">لينا تخبر أصحابها</div>
+
+                <div class="scene-description">
+                    لينا تتسلم الطلب. الجودة عالية جداً. التوصيل كان أسرع من التوقع. تكتب تقييم 5 نجوم وتخبر صديقاتها!
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👧 لينا (تكتب التقييم):</div>
+                    <div class="dialogue-text">
+                        "⭐⭐⭐⭐⭐ أفضل منصة للطلاب! أسعار أرخص + توصيل سريع + جودة عالية. روحو حملوا انطلاقة!"
+                    </div>
+                </div>
+
+                <div class="dialogue">
+                    <div class="dialogue-speaker">👧 لينا (في مجموعة الواتس):</div>
+                    <div class="dialogue-text">
+                        "يا بنات، حطو في بالكم تطبيق جديد 'انطلاقة'. أسعاره أرخص من Noon بـ 20% وتوصيل أسرع! منشنة لكم"
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">⭐ التقييم</div>
+                        <div class="stat-value">5/5</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">👥 أصدقاء بيسمعوا</div>
+                        <div class="stat-value">10+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 11 ============ -->
+<div class="storyboard-page" id="scene-11">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/13b33f94-426b-48cb-b315-f0e4efa15db4.png" alt="سيد">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 1️⃣1️⃣</div>
+                <div class="scene-title">الشهر الأول: النمو الأول يظهر</div>
+                <div class="scene-subtitle">30 يوم من البداية الناجحة</div>
+
+                <div class="scene-description">
+                    بعد 30 يوم من البداية:
+                    - التقييمات عالية جداً (4.8/5)
+                    - المستخدمين الجدد زيادة تدريجية (15-25 طلب يومي للمنصة)
+                    - محمد صار يبيع 12-15 طلب يومي (بدلاً من 3-5)
+                    - فاطمة صار تبيع 30-40 حقيبة وحذاء شهرياً
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">⭐ متوسط التقييم</div>
+                        <div class="stat-value">4.8/5</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">👥 المستخدمين</div>
+                        <div class="stat-value">520</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">📦 طلب يومي</div>
+                        <div class="stat-value">18</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">💼 محمد يبيع</div>
+                        <div class="stat-value">14/يوم</div>
+                    </div>
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">📈 النتيجة الأولى:</div>
+                    <div class="conclusion-text">
+                        محمد بدأ يرى النور! مبيعاته ارتفعت من 3-5 إلى 12-15 يومياً. هذا يعني 250-300% نمو في الشهر الأول فقط!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ SCENE 12 ============ -->
+<div class="storyboard-page" id="scene-12">
+    <div class="scene">
+        <div class="scene-container">
+            <div class="scene-character">
+                <img src="https://user-gen-media-assets.s3.amazonaws.com/seedream_images/887f8845-9dd1-488d-9311-e3a3e975aedd.png" alt="محمد">
+            </div>
+            <div class="scene-content">
+                <div class="scene-number">المشهد 1️⃣2️⃣</div>
+                <div class="scene-title">الخلاصة: معادلة النجاح</div>
+                <div class="scene-subtitle">الجميع كسب، الجميع سعيان</div>
+
+                <div class="scene-description">
+                    بعد شهر من البداية:
+                    <br><br>
+                    <strong>✅ محمد:</strong> من 3-5 طلبات يومية إلى 12-15 (زيادة 250%)
+                    <br><strong>✅ فاطمة:</strong> 30-40 حقيبة شهري × 12.5 ريال = 375-500 ريال أرباح
+                    <br><strong>✅ علي (Asyad):</strong> 10-15 طلب يومي × 0.8 = 80-120 ريال شهري
+                    <br><strong>✅ لينا والطلاب:</strong> توفير 20% على المشتريات + توصيل سريع
+                    <br><strong>✅ سيد (المنصة):</strong> سمعة عالية + أساس قوي للنمو
+                </div>
+
+                <div class="conclusion-box">
+                    <div class="conclusion-label">🎯 الدرس الأهم:</div>
+                    <div class="conclusion-text">
+                        قبول خسارة صغيرة في البداية (توصيل مجاني + عمولة صفر) = حصول على سمعة عالية + عملاء راضيين + أساس قوي للنمو في المستقبل = ربح في النهاية!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="navigation">
+    <button class="nav-btn" id="prev" onclick="prevScene()">← السابق</button>
+    <button class="nav-btn" id="next" onclick="nextScene()">التالي →</button>
+</div>
+
+<script>
+let currentScene = 1;
+const totalScenes = 12;
+document.getElementById('total').textContent = totalScenes;
+
+function showScene(n) {
+    const pages = document.querySelectorAll('.storyboard-page');
+    pages.forEach(p => p.classList.remove('active'));
+
+    if (n >= 1 && n <= totalScenes) {
+        document.getElementById('scene-' + n).classList.add('active');
+        document.getElementById('current').textContent = n;
+        document.getElementById('prev').disabled = (n === 1);
+        document.getElementById('next').disabled = (n === totalScenes);
+    }
+}
+
+function nextScene() {
+    if (currentScene < totalScenes) {
+        currentScene++;
+        showScene(currentScene);
+    }
+}
+
+function prevScene() {
+    if (currentScene > 1) {
+        currentScene--;
+        showScene(currentScene);
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') nextScene();
+    if (e.key === 'ArrowLeft') prevScene();
+});
+
+showScene(1);
+</script>
+
+</body>
+</html>
